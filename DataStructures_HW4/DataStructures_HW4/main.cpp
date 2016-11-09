@@ -58,9 +58,10 @@ vector<codeNode> codes;
 
 int main()
 {
-	readFile();
+	//readFile();
 	//buildTree();
-	encode();
+	//encode();
+	decode();
 
 	cin.get();
 }
@@ -104,6 +105,9 @@ void buildTree()
 		minHeap.push(new freqNode(frequencies[i].character, frequencies[i].frequency));
 	}
 
+	//now that we have our full minHeap lets print it out in pre-order traversal
+
+
 	//now go through the heap and combine leaves until we have one node left
 	while (minHeap.size() > 1)
 	{
@@ -127,6 +131,15 @@ void buildTree()
 	getCodes(minHeap.top(), "");
 }
 
+string preOrderTraversal(freqNode * root)
+{
+	if (!root)
+		return "/";
+	else
+
+	return preOrderTraversal(root->left) + preOrderTraversal(root->right);
+}
+
 void getCodes(freqNode * root, string code)
 {
 	if (!root)
@@ -142,7 +155,11 @@ void getCodes(freqNode * root, string code)
 	getCodes(root->right, code + "1");
 }
 
-//-----------------------------------encode stuff------------------//
+
+
+
+
+//------------------------------encode stuff---------------------//
 
 void encode()
 {
@@ -191,3 +208,7 @@ void encode()
 	cout << encodedMessage;
 }
 
+void decode()
+{
+
+}
