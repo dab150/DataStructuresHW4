@@ -40,16 +40,34 @@ struct codeNode
 	}
 };
 
-struct compare
+struct nodeCompare
 {
-	bool operator()(freqNode * left, freqNode* right)
+	bool operator()(freqNode *left, freqNode *right) 
 	{
-		return (left->frequency > right->frequency);
+		if (left == NULL)
+			return false;
+		if (right == NULL)
+			return true;
+
+		if (left->frequency == right->frequency)
+		{
+			if (left->character < 'a' && left->character != '$')
+			{
+				if (right->character < 'a' && right->character != '$')
+					return left->character > right->character;
+				return true;
+			}
+			if (right->character < 'a' && right->character != '$')
+				return false;
+			return left->character > right->character;
+		}
+		return left->frequency > right->frequency;
 	}
 };
 
 void readFile();
 void buildTree();
+void preOrderTransversal(freqNode *root);
 void getCodes(freqNode * root, string code);
 void encode();
 
@@ -58,10 +76,10 @@ vector<codeNode> codes;
 
 int main()
 {
-	//readFile();
-	//buildTree();
+	readFile();
+	buildTree();
 	//encode();
-	decode();
+	//decode();
 
 	cin.get();
 }
@@ -79,10 +97,10 @@ void readFile()
 	for (int i = 0; freqFile >> character && freqFile >> freq; i++)
 	{
 		//i need to handle special cases here because it makes it easier to encode later
-		if (character == '-')
-			character = ' ';
-		else if (character == '!')
-			character = '\n';
+		//if (character == '-')
+		//	character = ' ';
+		//else if (character == '!')
+		//	character = '\n';
 
 		freqNode input (character, freq);
 		frequencies.push_back(input);
@@ -98,7 +116,7 @@ void buildTree()
 	freqNode *left, *right, *sumNode;
 
 	//create a min heap and insert characters from file we read in previously
-	priority_queue<freqNode*, vector<freqNode*>, compare> minHeap;
+	priority_queue<freqNode*, vector<freqNode*>, nodeCompare> minHeap;
 
 	for (int i = 0; i < frequencies.size(); i++)
 	{	
@@ -121,32 +139,58 @@ void buildTree()
 
 		//now we add these two nodes' values together and create a new with the frequency being the value of their sum
 		//also, the two added nodes become the left and right child of this new node
-		sumNode = new freqNode('+', left->frequency + right->frequency);
+		sumNode = new freqNode('$', left->frequency + right->frequency);
 		sumNode->left = left;
 		sumNode->right = right;
 		//now add it back to the heap
 		minHeap.push(sumNode);
 	}
 
+	//print tree
+	cout << "Pre Order Transversal of the Huffmann Tree: \n";
+	preOrderTransversal(minHeap.top());
+	cout << "\n";
+
 	getCodes(minHeap.top(), "");
 }
 
-string preOrderTraversal(freqNode * root)
+void preOrderTransversal(freqNode * root)
 {
-	if (!root)
-		return "/";
+	if (root == NULL)
+		cout << "/";
 	else
+	{
+		cout << root->character;
+	}
 
-	return preOrderTraversal(root->left) + preOrderTraversal(root->right);
+	if (root->left != NULL)
+		preOrderTransversal(root->left);
+	else
+		cout << "/";
+	if (root->right != NULL)
+		preOrderTransversal(root->right);
+	else
+		cout << "/";
 }
 
 void getCodes(freqNode * root, string code)
 {
+	char tempChar;
+
 	if (!root)
 		return;
-	if (root->character != '+')
+
+	tempChar = root->character;
+
+	if (root->character != '$')
 	{
-		cout << root->character << " " << code << "\n";
+		//handle those special cases again like we did above
+		//if (tempChar == ' ')
+		//	tempChar = '-';
+		//else if (tempChar == '\n')
+		//	tempChar = '!';
+
+		cout << tempChar << " " << code << "\n";
 	}
 
 	//print to the left and add 0 to the code
@@ -210,5 +254,21 @@ void encode()
 
 void decode()
 {
+	//read in the encrypted message
+	ifstream messageFile("basic_encoded.txt");
+	if (!messageFile)
+		cout << "Error Opening Encoded File!";
 
+	int messageChar;
+
+	string encodedMessage = "";
+
+	while (messageFile >> noskipws >> messageChar)
+	{
+		//if we see a 1, go right through the huffman tree
+		if (messageChar == 1)
+		{
+
+		}
+	}
 }
