@@ -20,24 +20,38 @@ struct codeNode
 };
 
 //function prototypes
-void printEncodedMessageFile();
-void readCodeFile();
+void readCodeFile(string file);
+void printEncodedMessageFile(string messageFile, string encodedFile);
 
 //data structures
 vector<codeNode> codes;
 
-int main()
+int main(int argc, char *argv[])
 {
-	readCodeFile();
-	printEncodedMessageFile();
+	//read in the arguments from the command line
+	//arg1 = code file
+	//arg2 = message file
+	//arg3 = encoded message file
+	if (argc != 4)
+		cout << "Incorrect Number of Arguments!\n";
+
+	string codeFileTxt(argv[1]);
+	string messageFileTxt(argv[2]);
+	string encodedMessageFileTxt(argv[3]);
+
+	readCodeFile(codeFileTxt);
+	cout << "Code File Read\n";
+
+	printEncodedMessageFile(messageFileTxt, encodedMessageFileTxt);
+	cout << "Encoded Message Created\n";
 
 	cin.get();
 }
 
-void readCodeFile()
+void readCodeFile(string file)
 {
 	//read in the codes
-	ifstream codeFile("basic_code.txt");
+	ifstream codeFile(file);
 	if (!codeFile)
 		cout << "Error Opening Code File! \n";
 
@@ -52,10 +66,10 @@ void readCodeFile()
 	}
 }
 
-void printEncodedMessageFile()
+void printEncodedMessageFile(string msgFile, string encodedFile)
 {
 	//read in the non-encrypted message
-	ifstream messageFile("basic_message.txt");
+	ifstream messageFile(msgFile);
 	if (!messageFile)
 		cout << "Error Opening Message File!";
 
@@ -84,6 +98,6 @@ void printEncodedMessageFile()
 	encodedMessage += codes[codes.size() - 1].code;
 
 	//now that we have an entire message we can write it to a file
-	ofstream outputFile("encoded.txt");
+	ofstream outputFile(encodedFile);
 	outputFile << encodedMessage;
 }

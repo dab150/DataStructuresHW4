@@ -22,35 +22,49 @@ node* newNode(char character)
 	return (temp);
 }
 
-void readPreOrder();
+void readPreOrder(string file);
 void rebuildTree(node *&root, int &i);
-void decode(node *root);
-void printDecodedFile();
+void decode(node *root, string file);
+void printDecodedFile(string file);
 
 vector<char> preOrderTree;
 vector<char> encodedMessage;
 vector<char> decodedMessage;
 
-int main()
+int main(int argc, char *argv[])
 {
-	readPreOrder();
+	//read in the arguments from the command line
+	//arg1 = tree file
+	//arg2 = encoded message file
+	//arg3 = decoded message file
+	if (argc != 4)
+		cout << "Incorrect Number of Arguments!\n";
+
+	string treeFileTxt(argv[1]);
+	string encodedFileTxt(argv[2]);
+	string decodedMessageFileTxt(argv[3]);
+
+	readPreOrder(treeFileTxt);
+	cout << "Pre Order Tree Read\n";
 
 	//node to act as first node of rebuilt tree
 	node *minHeapRoot = NULL;
 	int x = -1;
 	rebuildTree(minHeapRoot, x);
+	cout << "Tree Rebuilt\n";
 
-	decode(minHeapRoot);
+	decode(minHeapRoot, encodedFileTxt);
 
-	printDecodedFile();
+	printDecodedFile(decodedMessageFileTxt);
+	cout << "Message Decoded\n";
 
 	cin.get();
 }
 
-void readPreOrder()
+void readPreOrder(string file)
 {
 	//read in the tree
-	ifstream treeFile("basic_tree.txt");
+	ifstream treeFile(file);
 	if (!treeFile)
 		cout << "Error Opening Tree File!";
 
@@ -76,10 +90,10 @@ void rebuildTree(node *&root, int &i)
 	rebuildTree(root->right, i);
 }
 
-void decode(node *root)
+void decode(node *root, string file)
 {
 	//read in the encrypted message
-	ifstream messageFile("basic_encoded.txt");
+	ifstream messageFile(file);
 	if (!messageFile)
 		cout << "Error Opening Encoded File!";
 
@@ -117,10 +131,10 @@ void decode(node *root)
 	}
 }
 
-void printDecodedFile()
+void printDecodedFile(string file)
 {
 	//print to file
-	ofstream outputFile("decoded.txt");
+	ofstream outputFile(file);
 
 	for (int i = 0; i < decodedMessage.size(); i++)
 	{
@@ -141,6 +155,4 @@ void printDecodedFile()
 
 		outputFile << output;
 	}
-
-	cout << "Message Decoded! \n";
 }

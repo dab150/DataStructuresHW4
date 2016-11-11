@@ -1,0 +1,10 @@
+basic test message
+file size 
+num of new lines 
+num of spaces 
+
+
+two blank lines above and below
+
+
+note there is no newline at the end of filea
